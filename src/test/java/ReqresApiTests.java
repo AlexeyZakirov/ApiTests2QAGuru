@@ -3,7 +3,6 @@ import models.RequestCreateUserRootModel;
 import models.ResponseCreateUserRootModel;
 import models.SingleUserRootModel;
 import models.UserListRootModel;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,6 +13,7 @@ import java.util.stream.Stream;
 
 import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static specs.ReqresSpecs.*;
 
 public class ReqresApiTests extends TestBase {
@@ -32,7 +32,7 @@ public class ReqresApiTests extends TestBase {
                         .spec(responseSpecificationWithStatus200)
                         .extract().as(UserListRootModel.class));
         step("Проверить, что в массиве data ожидаемое количество пользователей", () ->
-                Assertions.assertEquals(userListRootModel.getData().size(), expectedDataSize));
+                assertThat(userListRootModel.getData().size()).isEqualTo(expectedDataSize));
     }
 
     @DisplayName("Проверка, что список пользователей пустой на не существующей странице")
@@ -48,7 +48,7 @@ public class ReqresApiTests extends TestBase {
                         .spec(responseSpecificationWithStatus200)
                         .extract().as(UserListRootModel.class));
         step("Проверить, что в массиве data 0 пользователей", () ->
-                Assertions.assertEquals(userListRootModel.getData().size(), expectedDataSize));
+                assertThat(userListRootModel.getData().size()).isEqualTo(expectedDataSize));
     }
 
     static Stream<Arguments> userNamesAndIdShouldBeEqualsTest() {
@@ -59,8 +59,8 @@ public class ReqresApiTests extends TestBase {
     }
 
     @MethodSource()
+    @DisplayName("Проверка имени и фамилии пользователя по id: ")
     @ParameterizedTest(name = "У пользователя с id = {0}, имя - {1}, фамилия {2}")
-    @DisplayName("Проверка id, имени и фамилии пользователя - ")
     public void userNamesAndIdShouldBeEqualsTest(int id, String firstName, String lastName) {
         SingleUserRootModel singleUserRootModel = step("Отправить GET запрос с id существующего пользователя", () ->
                 given(requestWithoutBodySpecification)
@@ -70,18 +70,19 @@ public class ReqresApiTests extends TestBase {
                         .spec(responseSpecificationWithStatus200)
                         .extract().as(SingleUserRootModel.class));
         step("Проверить, что id совпадают", () ->
-                Assertions.assertEquals(singleUserRootModel.getData().getId(), id));
+                assertThat(singleUserRootModel.getData().getId()).isEqualTo(id));
         step("Проверить, что firstName совпадают", () ->
-                Assertions.assertEquals(singleUserRootModel.getData().getFirstName(), firstName));
+                assertThat(singleUserRootModel.getData().getFirstName()).isEqualTo(firstName));
         step("Проверить, что lastName совпадают", () ->
-                Assertions.assertEquals(singleUserRootModel.getData().getLastName(), lastName));
+                assertThat(singleUserRootModel.getData().getLastName()).isEqualTo(lastName));
     }
 
     @DisplayName("Проверка создания пользователя с именем и работой")
     @Test
     public void createUserWithNameAndJobTest() {
         String name = faker.name().firstName();
-        RequestCreateUserRootModel userBody = new RequestCreateUserRootModel(name, "QA");
+        String jobName = "QA";
+        RequestCreateUserRootModel userBody = new RequestCreateUserRootModel(name, jobName);
         ResponseCreateUserRootModel responseCreateUserRootModel = step("Отправить POST запрос на создание пользователя с именем и работой в теле", () ->
                 given(requestWithBodySpecification)
                         .body(userBody)
@@ -90,9 +91,9 @@ public class ReqresApiTests extends TestBase {
                         .spec(responseSpecificationWithStatus201)
                         .extract().as(ResponseCreateUserRootModel.class));
         step("Проверить, что в теле ответа такое же имя, что и при отправке запроса", () ->
-                Assertions.assertEquals(responseCreateUserRootModel.getName(), name));
+                assertThat(responseCreateUserRootModel.getName()).isEqualTo(name));
         step("Проверить, что в теле ответа такая же работа, что и при отправке запроса", () ->
-                Assertions.assertEquals(responseCreateUserRootModel.getJob(), "QA"));
+                assertThat(responseCreateUserRootModel.getJob()).isEqualTo(jobName));
     }
 
     @DisplayName("Проверка создания пользователя без указания работы")
@@ -109,16 +110,17 @@ public class ReqresApiTests extends TestBase {
                         .spec(responseSpecificationWithStatus201)
                         .extract().as(ResponseCreateUserRootModel.class));
         step("Проверить, что в теле ответа такое же имя, что и при отправке запроса", () ->
-        Assertions.assertEquals(responseCreateUserRootModel.getName(), name));
+                assertThat(responseCreateUserRootModel.getName()).isEqualTo(name));
         step("Проверить, что в теле ответа работа равна null", () ->
-        Assertions.assertNull(responseCreateUserRootModel.getJob()));
+                assertThat(responseCreateUserRootModel.getJob()).isNull());
     }
 
     @DisplayName("Проверка создания пользователя без указания имени")
     @Test
     public void createUserWithoutNameTest() {
+        String jobName = "QA";
         RequestCreateUserRootModel userBody = new RequestCreateUserRootModel();
-        userBody.setJob("QA");
+        userBody.setJob(jobName);
         ResponseCreateUserRootModel responseCreateUserRootModel = step("Отправить POST запрос на создание пользователя с работой, но без имени в теле", () ->
                 given(requestWithBodySpecification)
                         .body(userBody)
@@ -127,8 +129,8 @@ public class ReqresApiTests extends TestBase {
                         .spec(responseSpecificationWithStatus201)
                         .extract().as(ResponseCreateUserRootModel.class));
         step("Проверить, что в теле ответа такая же работа, что и при отправке запроса", () ->
-                Assertions.assertEquals(responseCreateUserRootModel.getJob(), "QA"));
+                assertThat(responseCreateUserRootModel.getJob()).isEqualTo(jobName));
         step("Проверить, что в теле ответа имя равно null", () ->
-                Assertions.assertNull(responseCreateUserRootModel.getName()));
+                assertThat(responseCreateUserRootModel.getName()).isNull());
     }
 }
