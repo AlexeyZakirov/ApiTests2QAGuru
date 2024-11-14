@@ -25,11 +25,11 @@ public class ReqresApiTests extends TestBase {
         int page = faker.number().numberBetween(1, 2);
         int expectedDataSize = 6;
         UserListRootModel userListRootModel = step("Отправить GET запрос с существующей страницей", () ->
-                given(requestGetSpecification)
+                given(requestWithoutBodySpecification)
                         .queryParam("page", page)
                         .get("/users")
                         .then()
-                        .spec(responseGetSpecificationWithStatus200)
+                        .spec(responseSpecificationWithStatus200)
                         .extract().as(UserListRootModel.class));
         step("Проверить, что в массиве data ожидаемое количество пользователей", () ->
                 Assertions.assertEquals(userListRootModel.getData().size(), expectedDataSize));
@@ -41,11 +41,11 @@ public class ReqresApiTests extends TestBase {
         int page = faker.number().numberBetween(4, 50);
         int expectedDataSize = 0;
         UserListRootModel userListRootModel = step("Отправить GET запрос с не существующей страницей", () ->
-                given(requestGetSpecification)
+                given(requestWithoutBodySpecification)
                         .queryParam("page", page)
                         .get("/users")
                         .then()
-                        .spec(responseGetSpecificationWithStatus200)
+                        .spec(responseSpecificationWithStatus200)
                         .extract().as(UserListRootModel.class));
         step("Проверить, что в массиве data 0 пользователей", () ->
                 Assertions.assertEquals(userListRootModel.getData().size(), expectedDataSize));
@@ -60,13 +60,14 @@ public class ReqresApiTests extends TestBase {
 
     @MethodSource()
     @ParameterizedTest(name = "Проверка, что у пользователя с id = {0}, имя - {1}, фамилия {2}")
+    @DisplayName("Проверка, что у пользователя с id = {0}, имя - {1}, фамилия {2}")
     public void userNamesAndIdShouldBeEqualsTest(int id, String firstName, String lastName) {
         SingleUserRootModel singleUserRootModel = step("Отправить GET запрос с id существующего пользователя", () ->
-                given(requestGetSpecification)
+                given(requestWithoutBodySpecification)
                         .pathParam("id", id)
                         .get("/users/{id}")
                         .then()
-                        .spec(responseGetSpecificationWithStatus200)
+                        .spec(responseSpecificationWithStatus200)
                         .extract().as(SingleUserRootModel.class));
         step("Проверить, что id совпадают", () ->
                 Assertions.assertEquals(singleUserRootModel.getData().getId(), id));
@@ -82,11 +83,11 @@ public class ReqresApiTests extends TestBase {
         String name = faker.name().firstName();
         RequestCreateUserRootModel userBody = new RequestCreateUserRootModel(name, "QA");
         ResponseCreateUserRootModel responseCreateUserRootModel = step("Отправить POST запрос на создание пользователя с именем и работой в теле", () ->
-                given(requestPostSpecification)
+                given(requestWithBodySpecification)
                         .body(userBody)
                         .post("/users")
                         .then()
-                        .spec(responsePostSpecificationWithStatus201)
+                        .spec(responseSpecificationWithStatus201)
                         .extract().as(ResponseCreateUserRootModel.class));
         step("Проверить, что в теле ответа такое же имя, что и при отправке запроса", () ->
                 Assertions.assertEquals(responseCreateUserRootModel.getName(), name));
@@ -101,11 +102,11 @@ public class ReqresApiTests extends TestBase {
         RequestCreateUserRootModel userBody = new RequestCreateUserRootModel();
         userBody.setName(name);
         ResponseCreateUserRootModel responseCreateUserRootModel = step("Отправить POST запрос на создание пользователя с именем, но без работы в теле", () ->
-                given(requestPostSpecification)
+                given(requestWithBodySpecification)
                         .body(userBody)
                         .post("/users")
                         .then()
-                        .spec(responsePostSpecificationWithStatus201)
+                        .spec(responseSpecificationWithStatus201)
                         .extract().as(ResponseCreateUserRootModel.class));
         step("Проверить, что в теле ответа такое же имя, что и при отправке запроса", () ->
         Assertions.assertEquals(responseCreateUserRootModel.getName(), name));
@@ -119,11 +120,11 @@ public class ReqresApiTests extends TestBase {
         RequestCreateUserRootModel userBody = new RequestCreateUserRootModel();
         userBody.setJob("QA");
         ResponseCreateUserRootModel responseCreateUserRootModel = step("Отправить POST запрос на создание пользователя с работой, но без имени в теле", () ->
-                given(requestPostSpecification)
+                given(requestWithBodySpecification)
                         .body(userBody)
                         .post("/users")
                         .then()
-                        .spec(responsePostSpecificationWithStatus201)
+                        .spec(responseSpecificationWithStatus201)
                         .extract().as(ResponseCreateUserRootModel.class));
         step("Проверить, что в теле ответа такая же работа, что и при отправке запроса", () ->
                 Assertions.assertEquals(responseCreateUserRootModel.getJob(), "QA"));

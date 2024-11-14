@@ -1,12 +1,17 @@
 package models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Support{
 
-	@JsonProperty("text")
 	private String text;
 
-	@JsonProperty("url")
 	private String url;
 }

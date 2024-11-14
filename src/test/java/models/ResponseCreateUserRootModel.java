@@ -1,6 +1,6 @@
 package models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,17 +8,14 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ResponseCreateUserRootModel{
 
-	@JsonProperty("createdAt")
 	private String createdAt;
 
-	@JsonProperty("name")
 	private String name;
 
-	@JsonProperty("id")
 	private String id;
 
-	@JsonProperty("job")
 	private String job;
 }

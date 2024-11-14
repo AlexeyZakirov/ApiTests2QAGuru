@@ -10,19 +10,19 @@ import static helpers.CustomAllureListener.withCustomTemplates;
 import static io.restassured.RestAssured.with;
 
 public class ReqresSpecs {
-    public static RequestSpecification requestGetSpecification = with()
+    public static RequestSpecification requestWithoutBodySpecification = with()
             .filter(withCustomTemplates())
             .log().all();
-    public static RequestSpecification requestPostSpecification = with()
+    public static RequestSpecification requestWithBodySpecification = with()
             .filter(withCustomTemplates())
             .log().all()
             .contentType(ContentType.JSON);
-    public static ResponseSpecification responseGetSpecificationWithStatus200 =
+    public static ResponseSpecification responseSpecificationWithStatus200 =
             new ResponseSpecBuilder()
                     .expectStatusCode(200)
                     .log(LogDetail.ALL)
                     .build();
-    public static ResponseSpecification responsePostSpecificationWithStatus201 =
+    public static ResponseSpecification responseSpecificationWithStatus201 =
             new ResponseSpecBuilder()
                     .expectStatusCode(201)
                     .log(LogDetail.ALL)
