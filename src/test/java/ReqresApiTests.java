@@ -59,8 +59,8 @@ public class ReqresApiTests extends TestBase {
     }
 
     @MethodSource()
-    @ParameterizedTest(name = "Проверка, что у пользователя с id = {0}, имя - {1}, фамилия {2}")
-    @DisplayName("Проверка, что у пользователя с id = {0}, имя - {1}, фамилия {2}")
+    @ParameterizedTest(name = "У пользователя с id = {0}, имя - {1}, фамилия {2}")
+    @DisplayName("Проверка id, имени и фамилии пользователя - ")
     public void userNamesAndIdShouldBeEqualsTest(int id, String firstName, String lastName) {
         SingleUserRootModel singleUserRootModel = step("Отправить GET запрос с id существующего пользователя", () ->
                 given(requestWithoutBodySpecification)
